@@ -97,7 +97,6 @@ const UserDashboard = () => {
       });
 
       if (res.data.success) {
-        setWalletBalance((prev) => prev + parseFloat(topUpAmount));
         setError("");
         setTopUpAmount("");
         const url = res.data.data.authorization_url
