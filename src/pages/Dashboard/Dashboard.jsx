@@ -11,6 +11,7 @@ import electricityImage from "../../assets/flash.png";
 import transferImage from "../../assets/fund.png";
 import errorIcon from "../../assets/user.png";
 import chatIcon from "../../assets/chat.png";
+import { Router } from "react-router-dom";
 
 const UserDashboard = () => {
   const [username, setUsername] = useState("");
@@ -19,6 +20,8 @@ const UserDashboard = () => {
   const { setUser } = useContext(UserContext);
   const [accountNumber, setAccountNumber] = useState("");
   const [accountName, setAccountName] = useState("");
+  const [topUpAmount, setTopUpAmount] = useState("");
+  const [isTopUpFormOpen, setIsTopUpFormOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isTransferFormOpen, setIsTransferFormOpen] = useState(false);
@@ -45,7 +48,7 @@ const UserDashboard = () => {
 
     const fetchBanks = async () => {
       try {
-        const res = await axios.get("http://localhost:3464/api/banks");
+        const res = await axios.get("https://abank.vercel.app/api/banks");
         setBanks(res.data.data);
       } catch (err) {
         console.error("Error fetching bank list:", err);
@@ -78,19 +81,63 @@ const UserDashboard = () => {
     };
   }, []);
 
-  const handleTopUp = async() => {
-    try{
-      console.log("Top Up")
-    }catch(err){
-      
+  // const handleTopUp = async() => {
+  //   try{
+  //     console.log("Top Up")
+  //     if (!username) {
+  //       setError("Please login again.");
+  //       // toggleTransferForm()
+  //       return;
+  //     }  
+  //     const res = await axios.post("http://localhost:3464/api/topWallet", { username});
+  //     console.log(res, res.data);
+  //   }catch(err){
+  //     console.log(err);
+  //   }
+  // }
+
+  const handleTopUp = async () => {
+    if (!topUpAmount || parseFloat(topUpAmount) <= 0) {
+      setError("Please enter a valid amount to top up.");
+      setIsTopUpFormOpen(false)
+      return;
     }
-  }
+
+    try {
+      setIsTopUpFormOpen(false);
+      console.log(username, topUpAmount);
+      const res = await axios.post("http://localhost:3464/api/topWallet", {
+        username,
+        amount: topUpAmount,
+      });
+
+      if (res.data.success) {
+        setWalletBalance((prev) => prev + parseFloat(topUpAmount));
+        setError("");
+        setTopUpAmount("");
+        const url = res.data.data.authorization_url
+        console.log(url);
+        window.location.href = url;
+        alert("Wallet successfully topped up!");
+      } else {
+        setError(res.data.message || "Failed to top up wallet. Please try again.");
+      }
+    } catch (err) {
+      console.error("Top-up API error:", err);
+      setError(err.response?.data?.message || "An unexpected error occurred.");
+    }
+  };
+
+  const toggleTopUpForm = () => {
+    setIsTopUpFormOpen(!isTopUpFormOpen);
+    setTopUpAmount("");
+  };
 
   const handleBankSelect = async (bankCode) => {
     setSelectedBank(bankCode);
     if (accountNumber) {
       try {
-        const res = await axios.post("http://localhost:3464/api/account/verify", {
+        const res = await axios.post("https://abank.vercel.app/api/account/verify", {
           accountNumber,
           bankCode,
         });
@@ -132,7 +179,7 @@ const UserDashboard = () => {
     try {
       setLoading(true);
       console.log(accountNumber, accountName, selectedBank, transferAmount);
-      const response = await axios.post("http://localhost:3464/api/transfer", {
+      const response = await axios.post("https://abank.vercel.app/api/transfer", {
         username,
         accountNumber,
         accountName,
@@ -185,8 +232,26 @@ const UserDashboard = () => {
       <div className="user-info">
         <h2>Welcome, {username}</h2>
         <p>Wallet Balance: ₦{walletBalance.toFixed(2)}</p>
-        <button onClick={handleTopUp}>TOP UP</button>
+        <button onClick={toggleTopUpForm}>TOP UP</button>
       </div>
+      {isTopUpFormOpen && (
+  <div className="modal-overlay">
+    <div className="modal-content">
+      <h3>Top Up Wallet</h3>
+      <button onClick={toggleTopUpForm} className="close-button">X</button>
+      <div className="form-group">
+        <label>Enter Amount</label>
+        <input
+          type="number"
+          value={topUpAmount}
+          onChange={(e) => setTopUpAmount(e.target.value)}
+          placeholder="Amount to top up"
+        />
+      </div>
+      <button onClick={handleTopUp} className="submit-button">Submit</button>
+    </div>
+  </div>
+)}
 
       <div className="actions-container">
         <div className="action-card" onClick={toggleTransferForm}>

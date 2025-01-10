@@ -37,7 +37,7 @@ const LoginPage = () => {
   const handleLogin = async () => {
     try {
       setErrors((prev) => ({ ...prev, login: "" }));
-      const res = await axios.post("http://localhost:3464/api/login", { email, password });
+      const res = await axios.post("https://abank.vercel.app/api/login", { email, password });
       console.log("Logged in:", res.data);
       setUser(res.data.userData);
       navigate('/dashboard');

@@ -52,7 +52,7 @@ const SignupPage = () => {
     try {
       const payload = { username, email, password, phoneNumber };
       console.log(payload);
-      const res = await axios.post("http://localhost:3464/api/signup", payload);
+      const res = await axios.post("https://abank.vercel.app/api/signup", payload);
       console.log("Signed up:", res.data);
       if(res.data.message = 'Successful')
         navigate('/login');
