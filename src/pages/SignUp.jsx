@@ -1,17 +1,20 @@
-import React, { useState, useContext } from "react";
-import axios from "axios";
-import "./style.css"; // Import the CSS file
-import logo from "../assets/logo.png"; // Adjust the path based on where your logo is stored
+import React, { useState, useContext } from 'react';
+import axios from 'axios';
+import './style.css'; // Import the CSS file
+import logo from '../assets/logo.png'; // Adjust the path based on where your logo is stored
 import { useNavigate } from 'react-router-dom';
 
 const SignupPage = () => {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [errors, setErrors] = useState({ email: "", phoneNumber: "", sgnUp: "" });
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [errors, setErrors] = useState({
+    email: '',
+    phoneNumber: '',
+    sgnUp: '',
+  });
   const navigate = useNavigate();
-
 
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -22,43 +25,48 @@ const SignupPage = () => {
     const value = e.target.value;
     setEmail(value);
     if (!validateEmail(value)) {
-      setErrors((prev) => ({ ...prev, email: "Invalid email address" }));
+      setErrors((prev) => ({ ...prev, email: 'Invalid email address' }));
     } else {
-      setErrors((prev) => ({ ...prev, email: "" }));
+      setErrors((prev) => ({ ...prev, email: '' }));
     }
   };
 
   const handlePhoneNumberChange = (e) => {
     const value = e.target.value;
-    if (/^\d*$/.test(value)) { // Allows only numbers
+    if (/^\d*$/.test(value)) {
+      // Allows only numbers
       setPhoneNumber(value);
-      setErrors((prev) => ({ ...prev, phoneNumber: "" }));
+      setErrors((prev) => ({ ...prev, phoneNumber: '' }));
     } else {
-      setErrors((prev) => ({ ...prev, phoneNumber: "Phone number must contain only numbers" }));
+      setErrors((prev) => ({
+        ...prev,
+        phoneNumber: 'Phone number must contain only numbers',
+      }));
     }
   };
 
-
   const handleSubmit = (message) => {
     setErrors((prev) => ({ ...prev, signUp: message }));
-  }
+  };
 
   const handleSignup = async () => {
     if (errors.email || errors.phoneNumber) {
-      console.error("Fix validation errors before submitting");
+      console.error('Fix validation errors before submitting');
       return;
     }
-    setErrors((prev) => ({ ...prev, signUp:"" }));
+    setErrors((prev) => ({ ...prev, signUp: '' }));
     try {
       const payload = { username, email, password, phoneNumber };
       console.log(payload);
-      const res = await axios.post("https://abank.vercel.app/api/signup", payload);
-      console.log("Signed up:", res.data);
-      if(res.data.message = 'Successful')
-        navigate('/login');
+      const res = await axios.post(
+        'https://abank.vercel.app/api/signup',
+        payload
+      );
+      console.log('Signed up:', res.data);
+      if ((res.data.message = 'Successful')) navigate('/login');
     } catch (err) {
-      console.log("Error", err.response.data.message)
-      handleSubmit(err?.response?.data?.message)
+      console.log('Error', err.response.data.message);
+      handleSubmit(err?.response?.data?.message);
     }
   };
 
