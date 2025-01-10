@@ -81,21 +81,6 @@ const UserDashboard = () => {
     };
   }, []);
 
-  // const handleTopUp = async() => {
-  //   try{
-  //     console.log("Top Up")
-  //     if (!username) {
-  //       setError("Please login again.");
-  //       // toggleTransferForm()
-  //       return;
-  //     }  
-  //     const res = await axios.post("http://localhost:3464/api/topWallet", { username});
-  //     console.log(res, res.data);
-  //   }catch(err){
-  //     console.log(err);
-  //   }
-  // }
-
   const handleTopUp = async () => {
     if (!topUpAmount || parseFloat(topUpAmount) <= 0) {
       setError("Please enter a valid amount to top up.");
@@ -116,9 +101,7 @@ const UserDashboard = () => {
         setError("");
         setTopUpAmount("");
         const url = res.data.data.authorization_url
-        console.log(url);
         window.location.href = url;
-        alert("Wallet successfully topped up!");
       } else {
         setError(res.data.message || "Failed to top up wallet. Please try again.");
       }
@@ -171,8 +154,8 @@ const UserDashboard = () => {
 
 
   const handleTransfer = async () => {
-    if (!accountNumber || !selectedBank || !transferAmount) {
-      setError("Please fill in all fields to proceed.");
+    if (!parseInt(accountNumber)  || !selectedBank || !parseInt(transferAmount)) {
+      setError("Please fill in all fields correctly to proceed. ");
       toggleTransferForm()
       return;
     }  
@@ -190,7 +173,6 @@ const UserDashboard = () => {
         setWalletBalance((prev) => prev - transferAmount); // Update wallet balance
         setError(""); // Clear any existing errors
         toggleTransferForm(); // Close the transfer form
-        alert("Transfer successful!"); 
       } else {
         setError(response.data.message || "Transfer failed. Please try again.");
       }
@@ -231,7 +213,7 @@ const UserDashboard = () => {
 
       <div className="user-info">
         <h2>Welcome, {username}</h2>
-        <p>Wallet Balance: ₦{walletBalance.toFixed(2)}</p>
+        <p>Wallet Balance: ₦{(walletBalance).toFixed(2)}</p>
         <button onClick={toggleTopUpForm}>TOP UP</button>
       </div>
       {isTopUpFormOpen && (
