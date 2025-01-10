@@ -1,0 +1,19 @@
+body {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
