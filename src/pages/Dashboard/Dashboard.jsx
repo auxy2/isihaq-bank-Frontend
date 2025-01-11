@@ -91,7 +91,7 @@ const UserDashboard = () => {
     try {
       setIsTopUpFormOpen(false);
       console.log(username, topUpAmount);
-      const res = await axios.post('http://localhost:3464/api/topWallet', {
+      const res = await axios.post('https://abank.vercel.app/api/topWallet', {
         username,
         amount: topUpAmount,
       });
