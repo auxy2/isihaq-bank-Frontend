@@ -46,9 +46,9 @@ const LoginPage = () => {
       console.log('Logged in:', res.data);
       setUser(res.data.userData);
       navigate('/dashboard');
-      // Store JWT token in localStorage or state
     } catch (err) {
-      console.log('Login error:', err.response.data.message);
+      console.log('Login error:', err?.response?.data?.message);
+      console.log("Error: ", err);
       handleSubmit(err?.response?.data?.message);
     }
   };
